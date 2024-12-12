@@ -44,3 +44,10 @@ class StockMarketAnalysis:
         self.data['headline_length'] = self.data['headline'].str.len()
         print("Headline Length Statistics:")
         return self.data['headline_length'].describe()
+    
+      # Number of Articles in each publisher 
+    def article_per_publisher(self):
+        publisherCounts = self.data['publisher'].value_counts().to_frame().reset_index()
+        publisherCounts.columns = ['Publisher', 'Article Count']
+        print("Article Counts per Publisher:")
+        return publisherCounts
