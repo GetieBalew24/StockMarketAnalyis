@@ -174,3 +174,45 @@ class StockMarketAnalysis:
             topics.append(f"Topic {topic_idx+1}: " + ", ".join(topicKeywords))
         
         return topics
+    
+    # Time Series Analysis
+    def analyze_time_series(self):
+        """ Perform time series analysis to understand publication frequency related to market events."""
+        # Convert 'date' to datetime
+        if 'date' not in self.data or self.data['date'].dtype != 'datetime64[ns]':
+            self.data['date'] = pd.to_datetime(self.data['date'], errors='coerce')
+
+        # Group by date to see frequency over time
+        publicationFrequency = self.data['date'].value_counts().sort_index()
+
+        # Extract hour from date to analyze publishing times
+        self.data['hour'] = self.data['date'].dt.hour
+        publishingTimes = self.data['hour'].value_counts().sort_index()
+
+        return publicationFrequency, publishingTimes
+
+    def plot_time_series_trends(self, publicationFrequency, publishingTimes):
+        """
+        Plot the time series analysis results, including publication frequency and publishing times.
+        publicationFrequency: pd.Series of publication counts by date.
+        publishingTimes: pd.Series of publication counts by hour.
+        """
+        # Plot publication frequency over time
+        plt.figure(figsize=(12, 6))
+        plt.plot(publicationFrequency.index, publicationFrequency.values, marker='o', label="Publication Frequency")
+        plt.title('Publication Frequency Over Time')
+        plt.xlabel('Date')
+        plt.ylabel('Number of Articles')
+        plt.xticks(rotation=45)
+        plt.grid(True)
+        plt.legend()
+        plt.show()
+
+        # Plot publishing times by hour
+        plt.figure(figsize=(12, 6))
+        sns.barplot(x=publishingTimes.index, y=publishingTimes.values, palette='viridis')
+        plt.title('Publication Count by Hour of the Day')
+        plt.xlabel('Hour of the Day')
+        plt.ylabel('Number of Articles')
+        plt.grid(True)
+        plt.show()
