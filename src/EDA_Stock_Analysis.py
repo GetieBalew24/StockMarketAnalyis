@@ -94,3 +94,15 @@ class StockMarketAnalysis:
         plt.xlabel('Day of the Week')
         plt.ylabel('Number of Articles')
         plt.show()
+
+    # Text Analyis
+    def text_preprocess(self):
+        # Convert to lowercase and remove non-alphabetic characters
+        self.data['cleaned_headline']=self.data['headline'].str.lower().str.replace(r'[^a-zA-Z\s]', '', regex=True) 
+        # Remove leading and trailing whitespace
+        self.data['cleaned_headline']=self.data['cleaned_headline'].str.strip() 
+        # remove stop words
+        stop_words = set(stopwords.words('english'))
+        self.data['cleaned_headline'] = self.data['cleaned_headline'].apply(lambda x: ' '.join([word for word in x.split() if word not in stop_words]))
+        return self.data
+    
