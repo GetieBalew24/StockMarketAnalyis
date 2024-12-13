@@ -129,4 +129,48 @@ class StockMarketAnalysis:
         plt.ylabel('Number of Articles') 
         plt.title('Sentiment Distribution') 
         plt.show()  
+    def word_frequency(self):
+        # First preprocess the text
+        self.text_preprocess()
+        # Concatenate all headlines in a single string
+        all_text = ' '.join(self.data['cleaned_headline']) 
+        # Count the frequency of each word
+        word_freq = pd.Series(all_text.split()).value_counts() 
+        # Plot the top 20 most frequent words
+        word_freq[:20].plot(kind='bar', figsize=(12, 6))
+        plt.xticks(rotation=45)
+        plt.xlabel('Words') 
+        plt.ylabel('Frequency')
+        plt.title('Word Frequency Distribution')
+        plt.show()        
     
+    # Keyword Extraction using TF-IDF
+    def extract_keywords(self, n_keywords=5):
+        # Initialize TF-IDF Vectorizer
+        self.text_preprocess()
+        vectorizer = TfidfVectorizer(max_features=n_keywords)
+        tfidf_matrix = vectorizer.fit_transform(self.data['cleaned_headline'])
+        
+        # Extract keywords
+        keywords = vectorizer.get_feature_names_out()
+        return keywords
+    
+       # Topic Modeling
+    def perform_topic_modeling(self, n_topics=2):
+        self.text_preprocess()
+        # Initialize TF-IDF Vectorizer
+        tfvectorizer = TfidfVectorizer(stop_words='english')
+        tfidfMatrix = tfvectorizer.fit_transform(self.data['cleaned_headline'])
+        
+        # Perform LDA
+        lda = LatentDirichletAllocation(n_components=n_topics, random_state=0)
+        lda.fit(tfidfMatrix)
+        
+        # Display Topics
+        words = tfvectorizer.get_feature_names_out()
+        topics = []
+        for topic_idx, topic in enumerate(lda.components_):
+            topicKeywords = [words[i] for i in topic.argsort()[:-n_topics - 1:-1]]
+            topics.append(f"Topic {topic_idx+1}: " + ", ".join(topicKeywords))
+        
+        return topics
