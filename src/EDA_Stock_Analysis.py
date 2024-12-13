@@ -216,3 +216,77 @@ class StockMarketAnalysis:
         plt.ylabel('Number of Articles')
         plt.grid(True)
         plt.show()
+
+    # Publisher Analysis
+    def _extract_domain_from_email(self, email):
+        """
+        Extracts the domain from an email address.
+
+        param email: str, email address
+        return: str, domain extracted from the email
+        """
+        match = re.search(r'@([\w.-]+)', email)
+        return match.group(1) if match else None
+    
+    def analyze_publishers(self):
+        """
+        Analyze the publisher data to determine the top publishers (emails) and domains,
+        as well as publishers without domains.
+
+        return: tuple (pd.Series, pd.Series, pd.Series)
+                 publishers_with_domain: Frequency count of publishers with domains (emails).
+                 publishers_without_domain: Frequency count of publishers without domains.
+                 publisher_domains: Frequency count of domains from publishers with emails.
+        """
+        # Extract domains from publishers
+        self.data['domain'] = self.data['publisher'].apply(self._extract_domain_from_email)
+
+        # Separate publishers with and without domains
+        publishers_with_domain = self.data.dropna(subset=['domain'])
+        publishers_without_domain = self.data[self.data['domain'].isna()]
+
+        # Count frequency of publishers with domains
+        top_publishers_with_domain = publishers_with_domain['publisher'].value_counts()
+
+        # Count frequency of publishers without domains
+        top_publishers = publishers_without_domain['publisher'].value_counts()
+
+        # Count frequency of domains
+        publisher_domains = publishers_with_domain['domain'].value_counts()
+
+        return top_publishers_with_domain, top_publishers, publisher_domains
+
+    def plot_publisher_analysis(self, publishers_with_domain, publishers_without_domain, publisher_domains):
+        """
+        Plot analysis of publishers with and without domains, and their respective counts.
+
+        param publishers_with_domain: publishers with domains and their article counts.
+        param publishers_without_domain: publishers without domains and their article counts.
+        param publisher_domains: The domains extracted from publishers column.
+        """
+        # Plot publishers with domains
+        plt.figure(figsize=(12, 6))
+        sns.barplot(x=publishers_with_domain.index[:5], y=publishers_with_domain.values[:5], palette='coolwarm')
+        plt.title('Top 5 Publishers with domain by Article Count')
+        plt.xlabel('Publisher with Domain')
+        plt.ylabel('Number of Articles')
+        plt.xticks(rotation=45)
+        plt.show()
+
+        # Plot publishers without domains
+        plt.figure(figsize=(10, 6))
+        sns.barplot(x=publishers_without_domain.index[:5], y=publishers_without_domain.values[:5], palette='coolwarm')
+        plt.title('Top 5 Publishers by Article Count')
+        plt.xlabel('Publisher without Domain')
+        plt.ylabel('Number of Articles')
+        plt.xticks(rotation=45)
+        plt.show()
+
+        # Plot top domains
+        plt.figure(figsize=(10, 6))
+        sns.barplot(x=publisher_domains.index[:5], y=publisher_domains.values[:5], palette='coolwarm')
+        plt.title('Top 5 Publisher Domains by Article Count')
+        plt.xlabel('Domain')
+        plt.ylabel('Number of Articles')
+        plt.xticks(rotation=45)
+        plt.show()
