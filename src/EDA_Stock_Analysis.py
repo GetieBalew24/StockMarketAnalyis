@@ -8,6 +8,7 @@ import seaborn as sns
 from nltk.corpus import stopwords
 from sklearn.decomposition import LatentDirichletAllocation
 from sklearn.feature_extraction.text import TfidfVectorizer
+from textblob import TextBlob
 
 class StockMarketAnalysis:
     def __init__(self, file_path):
@@ -105,4 +106,27 @@ class StockMarketAnalysis:
         stop_words = set(stopwords.words('english'))
         self.data['cleaned_headline'] = self.data['cleaned_headline'].apply(lambda x: ' '.join([word for word in x.split() if word not in stop_words]))
         return self.data
+    
+    def get_sentiment(self):
+        # First preprocess the text
+        self.text_preprocess()
+        # Calculate the sentiment polarity of each headline
+        self.data['polarity'] = self.data['cleaned_headline'].apply(lambda x: TextBlob(x).sentiment.polarity)
+        # Categorize the sentiment based on the polarity score
+        self.data['sentiment'] = self.data['polarity'].apply(lambda x: 'positive' if x > 0 else 'Negative' if x < 0 else 'Neutral')
+        return self.data
+    def plot_sentiment_distribution(self):
+        # First preprocess the text
+        self.text_preprocess()
+        
+        # Visualize the sentiment distribution
+        sentiment_counts = self.get_sentiment()['sentiment'].value_counts()
+        print(sentiment_counts) 
+        plt.figure(figsize=(8, 6))
+        sns.barplot(x=sentiment_counts.index, y=sentiment_counts.values)
+        plt.xticks(rotation=45)  
+        plt.xlabel('Sentiment')  
+        plt.ylabel('Number of Articles') 
+        plt.title('Sentiment Distribution') 
+        plt.show()  
     
