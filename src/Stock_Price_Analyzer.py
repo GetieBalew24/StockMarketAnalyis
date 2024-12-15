@@ -61,3 +61,25 @@ class StockPriceAnalyzer:
         data['MACD'] = macd
         data['MACD_Signal'] = macd_signal
         return data
+    
+    def plot_stock_data(self, data, symbol):
+        self.data['Date'] = pd.to_datetime(self.data['Date'],errors='coerce',utc=True)
+        plt.figure(figsize=(10, 5))
+        plt.plot(data['Date'], data['Close'], label='Close')
+        plt.plot(data['Date'], data['SMA'], label='SMA')
+        plt.title(f'{symbol} Stock Price with Moving Average')
+        plt.xlabel('Date')
+        plt.ylabel('Price')
+        plt.legend()
+        plt.show()
+    
+    def visualize_stocks(self, stock_data):
+        # Loop through each stock symbol
+        self.data['Date'] = pd.to_datetime(self.data['Date'],errors='coerce',utc=True)
+        for symbol in stock_data['stock_symbol'].unique():
+            data = stock_data[stock_data['stock_symbol'] == symbol].copy()
+            data = self.calculate_technical_indicators(data)
+            
+            # Plot all indicators for each stock symbol
+            self.plot_stock_data(data, symbol)
+           
