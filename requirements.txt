@@ -8,3 +8,5 @@ yfinance
 TA-Lib
 PyFolio
 textblob
+pynance
+plotly
