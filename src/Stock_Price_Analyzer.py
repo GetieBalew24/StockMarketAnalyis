@@ -122,7 +122,6 @@ class StockPriceAnalyzer:
 
     # Calculate financial metrics using PyNance
 
-
     def calculate_financial_metrics(self):
         self.data['Date'] = pd.to_datetime(self.data['Date'],format='ISO8601')
     
@@ -173,4 +172,31 @@ class StockPriceAnalyzer:
         plt.legend(title='Stock Symbol')
 
         # Display the plot
+        plt.show()
+
+    #Plot financial metrics
+    def plot_financial_metrics(self):
+        self.data['Date'] = pd.to_datetime(self.data['Date'], format='ISO8601')
+        plt.figure(figsize=(14, 10))
+
+        # Plot Close Prices and Moving Average
+        plt.subplot(3, 1, 1)
+        plt.plot(self.data.index, self.data['Close'], label='Close Price', color='blue')
+        plt.plot(self.data.index, self.data['Moving Average'], label='Moving Average', color='red')
+        plt.title('Close Price and Moving Average')
+        plt.legend()
+
+        # Plot Daily Returns
+        plt.subplot(3, 1, 2)
+        plt.plot(self.data.index, self.data['Daily Returns'], label='Daily Returns', color='green')
+        plt.title('Daily Returns')
+        plt.legend()
+
+        # Plot Rolling Volatility
+        plt.subplot(3, 1, 3)
+        plt.plot(self.data.index, self.data['Rolling Volatility'], label='Rolling Volatility', color='orange')
+        plt.title('Rolling Volatility')
+        plt.legend()
+
+        plt.tight_layout()
         plt.show()
