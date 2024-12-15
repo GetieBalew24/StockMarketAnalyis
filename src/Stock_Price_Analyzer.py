@@ -106,6 +106,7 @@ class StockPriceAnalyzer:
         plt.legend()
         plt.show()
 
+    # visualize stocks data
     def visualize_stocks(self, stock_data):
         # Loop through each stock symbol
         self.data['Date'] = pd.to_datetime(self.data['Date'],errors='coerce',utc=True)
@@ -119,6 +120,57 @@ class StockPriceAnalyzer:
             self.plot_ema(data, symbol)
             self.plot_macd(data,symbol)
 
+    # Calculate financial metrics using PyNance
 
+
+    def calculate_financial_metrics(self):
+        self.data['Date'] = pd.to_datetime(self.data['Date'],format='ISO8601')
     
+        # Calculate daily returns using pandas
+        self.data['Daily Returns'] = self.data['Close'].pct_change()
+
+        # Calculate rolling volatility using pandas (standard deviation)
+        self.data['Rolling Volatility'] = self.data['Close'].rolling(window=20).std()
+
+        # Use pynance to calculate Simple Moving Average (SMA)
+        # Assuming the 'pynance' library provides SMA or other financial metrics
+        self.data['Moving Average'] = self.data['Close'].rolling(window=10).mean()
+
+        # Calculate cumulative returns using pandas
+        self.data['Cumulative Returns'] = (1 + self.data['Daily Returns']).cumprod() - 1
+
+        return self.data
     
+    def plot_price(self):
+        """
+        Plots the close price of the stock over time with respect to each stock symbol using Plotly Express.
+        """
+        if self.data.empty:
+            print("No data to plot. Please load or fetch data first.")
+            return
+        
+        # Ensure that the 'Date' column is in datetime format for better plotting
+        self.data['Date'] = pd.to_datetime(self.data['Date'],errors='coerce',utc=True)
+        
+        # Plot Close price for each stock symbol using Plotly Express
+       # Set the figure size
+        plt.figure(figsize=(12, 8))
+
+        # Plot Close prices over time for different stock symbols
+        for stock_symbol, group_data in self.data.groupby('stock_symbol'):
+            plt.plot(group_data['Date'], group_data['Close'], label=stock_symbol)
+
+        # Set title and labels
+        plt.title('Close Price Over Time for Different Stock Symbols')
+        plt.xlabel('Date')
+        plt.ylabel('Price (USD)')
+
+        # Rotate and format x-axis labels
+        plt.xticks(rotation=45)
+        plt.gca().xaxis.set_major_formatter(plt.matplotlib.dates.DateFormatter('%Y-%m-%d'))
+
+        # Show legend
+        plt.legend(title='Stock Symbol')
+
+        # Display the plot
+        plt.show()
