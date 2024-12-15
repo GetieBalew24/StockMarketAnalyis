@@ -83,6 +83,17 @@ class StockPriceAnalyzer:
         plt.ylabel('RSI')
         plt.legend()
         plt.show()
+    
+    # Stock Price with Exponential Moving Average
+    def plot_ema(self, data, symbol):
+        plt.figure(figsize=(10, 5))
+        plt.plot(data['Date'], data['Close'], label='Close')
+        plt.plot(data['Date'], data['EMA'], label='EMA')
+        plt.title(f'{symbol} Stock Price with Exponential Moving Average')
+        plt.xlabel('Date')
+        plt.ylabel('Price')
+        plt.legend()
+        plt.show()
 
     def visualize_stocks(self, stock_data):
         # Loop through each stock symbol
@@ -94,6 +105,8 @@ class StockPriceAnalyzer:
             # Plot all indicators for each stock symbol
             self.plot_stock_data(data, symbol)
             self.plot_rsi(data, symbol)
+            self.plot_ema(data, symbol)
+
 
     
     
