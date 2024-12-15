@@ -62,6 +62,7 @@ class StockPriceAnalyzer:
         data['MACD_Signal'] = macd_signal
         return data
     
+    # Stock Price with Moving Average
     def plot_stock_data(self, data, symbol):
         self.data['Date'] = pd.to_datetime(self.data['Date'],errors='coerce',utc=True)
         plt.figure(figsize=(10, 5))
@@ -72,7 +73,17 @@ class StockPriceAnalyzer:
         plt.ylabel('Price')
         plt.legend()
         plt.show()
-    
+
+    # Stock Price with Relative Strength Index (RSI)
+    def plot_rsi(self, data, symbol):
+        plt.figure(figsize=(10, 5))
+        plt.plot(data['Date'], data['RSI'], label='RSI')
+        plt.title(f'{symbol} Relative Strength Index (RSI)')
+        plt.xlabel('Date')
+        plt.ylabel('RSI')
+        plt.legend()
+        plt.show()
+
     def visualize_stocks(self, stock_data):
         # Loop through each stock symbol
         self.data['Date'] = pd.to_datetime(self.data['Date'],errors='coerce',utc=True)
@@ -82,4 +93,7 @@ class StockPriceAnalyzer:
             
             # Plot all indicators for each stock symbol
             self.plot_stock_data(data, symbol)
-           
+            self.plot_rsi(data, symbol)
+
+    
+    
