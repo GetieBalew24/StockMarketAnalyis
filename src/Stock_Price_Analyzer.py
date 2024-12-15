@@ -24,6 +24,7 @@ class StockPriceAnalyzer:
             # Automatically merge CSV files from the specified folder
             self.merge_csv_files(folder_path)
 
+    #merge all stock csv files
     def merge_csv_files(self, folder_path):
         """
         Merges all CSV files from the specified folder into one DataFrame and adds a 'stock_symbol' column.
@@ -48,3 +49,15 @@ class StockPriceAnalyzer:
         
         self.data = merged_df
         return self.data
+    
+         #Apply Analysis Indicators with TA-Lib 
+    def calculate_technical_indicators(self, data):
+        self.data['Data']=pd.to_datetime(self.data['Date'], format='ISO8601')
+        # Calculate various technical indicators
+        data['SMA'] = talib.SMA(data['Close'], timeperiod=20)
+        data['RSI'] = talib.RSI(data['Close'], timeperiod=14)
+        data['EMA'] = talib.EMA(data['Close'], timeperiod=20)
+        macd, macd_signal, _ = talib.MACD(data['Close'])
+        data['MACD'] = macd
+        data['MACD_Signal'] = macd_signal
+        return data
