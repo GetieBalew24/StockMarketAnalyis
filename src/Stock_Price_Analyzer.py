@@ -95,6 +95,17 @@ class StockPriceAnalyzer:
         plt.legend()
         plt.show()
 
+    # Moving Average Convergence Divergence (MACD)
+    def plot_macd(self, data, symbol):
+        plt.figure(figsize=(10, 5))
+        plt.plot(data['Date'], data['MACD'], label='MACD')
+        plt.plot(data['Date'], data['MACD_Signal'], label='MACD Signal')
+        plt.title(f'{symbol} Moving Average Convergence Divergence (MACD)')
+        plt.xlabel('Date')
+        plt.ylabel('Value')
+        plt.legend()
+        plt.show()
+
     def visualize_stocks(self, stock_data):
         # Loop through each stock symbol
         self.data['Date'] = pd.to_datetime(self.data['Date'],errors='coerce',utc=True)
@@ -106,6 +117,7 @@ class StockPriceAnalyzer:
             self.plot_stock_data(data, symbol)
             self.plot_rsi(data, symbol)
             self.plot_ema(data, symbol)
+            self.plot_macd(data,symbol)
 
 
     
