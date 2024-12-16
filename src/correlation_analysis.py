@@ -50,3 +50,7 @@ class CorrelationAnalyzer:
         
         self.data = merged_df
         return self.data
+    def calculate_daily_returns(self,price):
+        daily_returns = price.pct_change()
+        return daily_returns
+    

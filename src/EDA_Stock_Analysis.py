@@ -114,6 +114,8 @@ class StockMarketAnalysis:
         self.data['polarity'] = self.data['cleaned_headline'].apply(lambda x: TextBlob(x).sentiment.polarity)
         # Categorize the sentiment based on the polarity score
         self.data['sentiment'] = self.data['polarity'].apply(lambda x: 'positive' if x > 0 else 'Negative' if x < 0 else 'Neutral')
+        self.data.to_csv('../data/sentiment.csv', index=False)
+
         return self.data
     def plot_sentiment_distribution(self):
         # First preprocess the text
