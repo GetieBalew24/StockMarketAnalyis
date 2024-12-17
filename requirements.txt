@@ -10,3 +10,4 @@ PyFolio
 textblob
 pynance
 plotly
+streamlit
