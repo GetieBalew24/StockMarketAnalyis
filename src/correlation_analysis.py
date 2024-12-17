@@ -66,4 +66,65 @@ class CorrelationAnalyzer:
         plt.figure(figsize=(10, 8))
         sns.heatmap(corr_matrix, cmap='coolwarm', annot=True,fmt=".2f", cbar=True, linewidths=0.5)
         plt.show()
+    def correlation_each_symbol(self, data=None):
+        # Use provided data or fall back to the internal DataFrame
+        if data is None:
+            data = self.data
+
+        # Get unique stock symbols
+        unique_symbols = data['Ticker_symbol'].unique()
+        # Initialize a list to store correlation results
+        correlation_results = []
+
+        # Loop through each unique stock symbol
+        for symbol in unique_symbols:
+            # Filter data for the current symbol
+            symbol_data = data[data['Ticker_symbol'] == symbol]
+            
+            # Calculate the correlation between 'polarity' and 'daily_return'
+            correlation = symbol_data[['polarity', 'daily_return']].corr().loc['polarity', 'daily_return']
+            
+            # Append the result to the list
+            correlation_results.append({'Ticker_symbol': symbol, 'correlation': correlation})
+
+        # Convert the results list to a DataFrame
+        correlation_df = pd.DataFrame(correlation_results)
+
+        # Return the correlation DataFrame
+        return correlation_df
+    def visualize_relationships(self,aggregated_data=None):
+        """
+        Visualizes scatter plots to show relationships between Polarity and other financial metrics:
+        Daily Return, Close Price, and Volume.
+        
+        Parameters:
+            aggregated_data (DataFrame): Pandas DataFrame containing 'polarity', 'daily_return', 'Close', and 'Volume'.
+        """
+        # Set up the figure size
+        plt.figure(figsize=(14, 10))
+        
+        # Scatter plot for Polarity vs. Daily Return
+        plt.subplot(2, 2, 1)
+        sns.scatterplot(x='polarity', y='daily_return', data=aggregated_data)
+        plt.title('Polarity vs. Daily Return')
+        plt.xlabel('Polarity')
+        plt.ylabel('Daily Return')
+
+        # Scatter plot for Polarity vs. Close Price
+        plt.subplot(2, 2, 2)
+        sns.scatterplot(x='polarity', y='Close', data=aggregated_data)
+        plt.title('Polarity vs. Close Price')
+        plt.xlabel('Polarity')
+        plt.ylabel('Close Price')
+
+        # Scatter plot for Polarity vs. Volume
+        plt.subplot(2, 2, 3)
+        sns.scatterplot(x='polarity', y='Volume', data=aggregated_data)
+        plt.title('Polarity vs. Volume')
+        plt.xlabel('Polarity')
+        plt.ylabel('Volume')
+
+        # Adjust layout and display the plots
+        plt.tight_layout()
+        plt.show()
     
