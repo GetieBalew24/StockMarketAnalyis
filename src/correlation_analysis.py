@@ -54,3 +54,16 @@ class CorrelationAnalyzer:
         daily_returns = price.pct_change()
         return daily_returns
     
+    def correlation_matrix(self,data=None):
+         # Use provided data or fall back to the internal DataFrame
+        if data is None:
+            data = self.data
+        # Compute the correlation matrix
+        self.data.drop(columns=['Stock Splits','Dividends'], axis=1, inplace=True)        
+        corr_matrix = self.data.select_dtypes(include=['int', 'float']).corr()
+
+        # Plot correlation using heatmap
+        plt.figure(figsize=(10, 8))
+        sns.heatmap(corr_matrix, cmap='coolwarm', annot=True,fmt=".2f", cbar=True, linewidths=0.5)
+        plt.show()
+    
