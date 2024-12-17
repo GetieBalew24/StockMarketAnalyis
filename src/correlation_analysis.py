@@ -53,7 +53,7 @@ class CorrelationAnalyzer:
     def calculate_daily_returns(self,price):
         daily_returns = price.pct_change()
         return daily_returns
-    
+
     def correlation_matrix(self,data=None):
          # Use provided data or fall back to the internal DataFrame
         if data is None:
@@ -127,4 +127,57 @@ class CorrelationAnalyzer:
         # Adjust layout and display the plots
         plt.tight_layout()
         plt.show()
-    
+    def visualize_time_series(self,merged_data):
+        """
+        Visualizes Polarity and Stock Prices over time, along with their rolling averages.
+        
+        Parameters:
+            merged_data (DataFrame): Pandas DataFrame containing 'Date', 'polarity', 'Close', and 'Open'.
+            rolling_window (int): Window size for calculating rolling averages (default: 30 days).
+        """
+        # Ensure 'Date' is in datetime format
+        merged_data['Date'] = pd.to_datetime(merged_data['Date'])
+        
+        # Sort data by Date
+        merged_data = merged_data.sort_values(by='Date')
+        
+        # Set Date as index for easier plotting
+        merged_data.set_index('Date', inplace=True)
+        
+        # Plot Polarity and Stock Prices
+        plt.figure(figsize=(14, 7))
+        
+        # Plot Polarity
+        plt.subplot(2, 1, 1)
+        plt.plot(merged_data.index, merged_data['polarity'], label='Polarity', color='blue')
+        plt.title('Polarity Over Time')
+        plt.xlabel('Date')
+        plt.ylabel('Polarity')
+        plt.legend()
+        
+        # Plot Stock Prices
+        plt.subplot(2, 1, 2)
+        plt.plot(merged_data.index, merged_data['Close'], label='Close Price', color='green', alpha=0.7)
+        plt.plot(merged_data.index, merged_data['Open'], label='Open Price', color='red', alpha=0.7)
+        plt.title('Stock Prices Over Time')
+        plt.xlabel('Date')
+        plt.ylabel('Price')
+        plt.legend()
+        
+        plt.tight_layout()
+        plt.show()
+        
+        # Calculate Rolling Averages
+        merged_data['Close_rolling_mean'] = merged_data['Close'].rolling(window=30).mean()
+        merged_data['Polarity_rolling_mean'] = merged_data['polarity'].rolling(window=30).mean()
+        
+        # Plot Rolling Averages
+        plt.figure(figsize=(14, 7))
+        plt.plot(merged_data.index, merged_data['Close'], label='Close Price', color='green', alpha=0.5)
+        plt.plot(merged_data.index, merged_data['Close_rolling_mean'], label='Rolling Mean Close Price', color='darkgreen')
+        plt.plot(merged_data.index, merged_data['Polarity_rolling_mean'], label='Rolling Mean Polarity', color='blue')
+        plt.title('Rolling Averages of Polarity and Stock Prices')
+        plt.xlabel('Date')
+        plt.ylabel('Value')
+        plt.legend()
+        plt.show()
