@@ -181,3 +181,44 @@ class CorrelationAnalyzer:
         plt.ylabel('Value')
         plt.legend()
         plt.show()
+    
+    def Plot_correlation_with_symbol(self, data=None):
+        # Use provided data or fall back to the internal DataFrame
+        if data is None:
+            data = self.data
+
+        # Get unique stock symbols
+        unique_symbols = data['Ticker_symbol'].unique()
+
+        # Scatter Plot for Polarity vs. Daily Return
+        plt.figure(figsize=(12, 6))
+
+        # Loop through each stock symbol and plot
+        for symbol in unique_symbols:
+            symbol_data = data[data['Ticker_symbol'] == symbol]
+            plt.scatter(symbol_data['polarity'], symbol_data['daily_return'], label=symbol, alpha=0.5)
+
+        plt.title('Scatter Plot of Polarity vs. Daily Return')
+        plt.xlabel('Polarity')
+        plt.ylabel('Daily Return')
+        plt.legend(title='Ticker Symbol', bbox_to_anchor=(1.05, 1), loc='upper left')
+        plt.grid(True)
+        plt.tight_layout()
+        plt.show()
+
+        # Generate correlation DataFrame
+        correlation_df = self.correlation_each_symbol(data)
+
+        # Bar Plot of Correlations
+        plt.figure(figsize=(12, 6))
+
+        # Plot bar chart
+        sns.barplot(x='Ticker_symbol', y='correlation', data=correlation_df, palette='viridis')
+
+        plt.title('Correlation between Polarity and Daily Return by Stock Symbol')
+        plt.xlabel('Ticker Symbol')
+        plt.ylabel('Correlation')
+        plt.xticks(rotation=90)  # Rotate x labels for better readability
+        plt.grid(True)
+        plt.tight_layout()
+        plt.show()
